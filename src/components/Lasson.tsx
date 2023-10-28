@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CheckCircle, Lock } from 'phosphor-react'
+import { isPast, format } from 'date-fns'
+import ptbr from 'date-fns/locale/pt-BR'
 
 interface LessonProps {
   title: string;
@@ -10,12 +12,15 @@ interface LessonProps {
 
 export function Lesson(props: LessonProps) {
 
-  const isLessonAvalible = false;
+  const isLessonAvalible = isPast(props.availableAt);
+  const availableDateFormatted = format(props.availableAt, "EEEE' • 'd ' de 'MMMM ' • 'K'h'mm", {
+    locale: ptbr
+  })
 
   return (
     <a href="">
       <span className="text-gray-300">
-        {props.availableAt.toString()}
+        {availableDateFormatted}
       </span>
 
       <div className="rounded border border-gray-500 p-4 mt-2">
@@ -31,7 +36,7 @@ export function Lesson(props: LessonProps) {
               Em breve
             </span>
           )}
-          <span className="text-xs rounder py-[2px] px-2 text-white border  border-green-300 font-bold">
+          <span className="text-xs rounder py-[2px] px-2 text-white border  border-orange-600 font-bold">
             {props.type === 'live' ? 'AO VIVO' : 'AULA PRÁTICA'}
           </span>
         </header>
