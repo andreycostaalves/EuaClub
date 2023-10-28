@@ -1,7 +1,53 @@
-export function Sidebar() {
-  return (
-    <aside className="w-[348px] bg-gray-700 py-6 border-l border-gray-600">
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { gql, useQuery } from "@apollo/client";
+import { Lesson } from "./Lasson";
 
+const GET_LESSONS_QUERY = gql`
+  query MyQuery {
+  lessons(orderBy: availableAt_ASC, stage: PUBLISHED) {
+    id
+    availableAt
+    slug
+    lessonType
+    title
+  }
+}
+`
+
+interface GetLessonsQueryResponse {
+  lessons: {
+    id: string
+    title: string
+    availableAt: string
+    slug: string
+    lessonType: 'live' | 'class'
+  }[]
+}
+
+export function Sidebar() {
+  const { data } = useQuery<GetLessonsQueryResponse>(GET_LESSONS_QUERY)
+  console.log(data)
+
+  return (
+    <aside className="w-[348px] bg-gray-700 p-6 border-l border-gray-600">
+      <span className="font-bold text-2xl pb-6 mb-6 border-b border-gray-500 block">
+        Cronograma de aulas
+      </span>
+
+      <div className="flex flex-col gap-8">
+        {data?.lessons.map(lesson => {
+          return (
+            <Lesson
+              key={lesson.id}
+              title={lesson.title}
+              slug={lesson.slug}
+              availableAt={new Date(lesson.availableAt)}
+              type={lesson.lessonType}
+            />
+          )
+        })}
+
+      </div>
     </aside>
   )
 }
